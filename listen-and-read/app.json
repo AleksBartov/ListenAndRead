@@ -13,13 +13,16 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aleksbartov.listenandread"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.aleksbartov.listenandread",
+      "versionCode": 1
     },
     "web": {
       "bundler": "metro",
@@ -28,7 +31,14 @@
     },
     "plugins": [
       "expo-router",
-      "expo-font"
+      "expo-font",
+      [
+        "@react-native-voice/voice",
+        {
+          "microphonePermission": "CUSTOM: Разрешите Слушаю и читаю доступ к микрофону",
+          "speechRecognitionPermission": "CUSTOM: Разрешите Слушаю и читаю распозновать речь"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
