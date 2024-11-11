@@ -22,7 +22,10 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.aleksbartov.listenandread",
-      "versionCode": 1
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -42,6 +45,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "5e3940da-6ddb-4d7d-a3de-d635aa8a3e1e"
+      }
     }
   }
 }
