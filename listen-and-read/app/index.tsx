@@ -1,5 +1,12 @@
 import { Colors } from "@/constants/Colors";
-import { Button, Text, View, StyleSheet, Platform } from "react-native";
+import {
+  Button,
+  Text,
+  View,
+  StyleSheet,
+  Platform,
+  useWindowDimensions,
+} from "react-native";
 import { useEffect, useState } from "react";
 import {
   Gesture,
@@ -10,8 +17,16 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  runOnJS,
+  runOnUI,
+  SlideInRight,
+  withSequence,
+  withTiming,
+  Easing,
+  withRepeat,
 } from "react-native-reanimated";
 import Voice from "@react-native-voice/voice";
+import * as Haptics from "expo-haptics";
 
 const styles = StyleSheet.create({
   card_container: {
@@ -29,9 +44,13 @@ const styles = StyleSheet.create({
 });
 
 export default function Index() {
+  const { width } = useWindowDimensions();
   let [started, setStarted] = useState(false);
+  let [toClose, setToClose] = useState(false);
   let [results, setResults] = useState([]);
   const translateX = useSharedValue(0);
+  const keyWordUpperCase = useSharedValue("Дом");
+  const keyWordLowerCase = useSharedValue("дом");
   const scale = useSharedValue(0.7);
   const rotateX = useSharedValue(Platform.OS === "ios" ? 40 : 5);
 
@@ -45,7 +64,6 @@ export default function Index() {
   }, []);
 
   const startSpeechToText = async () => {
-    "worklet";
     await Voice.start("ru");
     setStarted(true);
   };
@@ -63,10 +81,41 @@ export default function Index() {
     console.log(error);
   };
 
+  const answerHandler = (answer: string) => {
+    let a = answer.split(" ");
+    console.log(a);
+    const lowerCase = a.find((word) => word === keyWordLowerCase.value);
+    const upperCase = a.find((word) => word === keyWordUpperCase.value);
+
+    if (lowerCase || upperCase) {
+      translateX.value = withSpring(-width);
+      stopSpeechToText();
+    } else {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      translateX.value = withSequence(
+        withTiming(6, {
+          easing: Easing.bezier(0.35, 0.7, 0.5, 0.7),
+          duration: 80,
+        }),
+        withRepeat(
+          withTiming(-6, {
+            easing: Easing.bezier(0.35, 0.7, 0.5, 0.7),
+            duration: 80,
+          }),
+          3,
+          true
+        ),
+        withSpring(0, {
+          mass: 0.5,
+        })
+      );
+    }
+  };
+
   const gesture = Gesture.Tap().onEnd(() => {
     scale.value = withSpring(1);
     rotateX.value = withSpring(0);
-    startSpeechToText();
+    runOnJS(startSpeechToText)();
   });
 
   const style = useAnimatedStyle(() => ({
@@ -87,14 +136,20 @@ export default function Index() {
         backgroundColor: Colors.orange,
       }}
     >
-      <GestureDetector gesture={gesture}>
-        <Animated.View style={[styles.card_container, style]}>
-          <Text style={styles.card_text}>ДОМ</Text>
-        </Animated.View>
-      </GestureDetector>
-      {!started ? (
-        <Button title="Stop Speech to Text" onPress={stopSpeechToText} />
-      ) : undefined}
+      {!toClose && (
+        <GestureDetector gesture={gesture}>
+          <Animated.View
+            exiting={SlideInRight}
+            style={[styles.card_container, style]}
+          >
+            <Text style={styles.card_text}>ДОМ</Text>
+          </Animated.View>
+        </GestureDetector>
+      )}
+      {results.map((w, i) => {
+        answerHandler(w);
+        return undefined;
+      })}
     </GestureHandlerRootView>
   );
 }
@@ -107,8 +162,5 @@ export default function Index() {
 {started ? (
   <Button title="Stop Speech to Text" onPress={stopSpeechToText} />
 ) : undefined}
-{results.map((result, index) => (
-  <Text key={index}>{result}</Text>
-))}
 
 */
