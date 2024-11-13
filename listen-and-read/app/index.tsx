@@ -24,9 +24,11 @@ import Animated, {
   withTiming,
   Easing,
   withRepeat,
+  useDerivedValue,
 } from "react-native-reanimated";
 import Voice from "@react-native-voice/voice";
-import * as Haptics from "expo-haptics";
+import { StatusBar } from "expo-status-bar";
+import { Canvas, LinearGradient, Rect, vec } from "@shopify/react-native-skia";
 
 const styles = StyleSheet.create({
   card_container: {
@@ -44,7 +46,7 @@ const styles = StyleSheet.create({
 });
 
 export default function Index() {
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   let [started, setStarted] = useState(false);
   let [toClose, setToClose] = useState(false);
   let [results, setResults] = useState([]);
@@ -53,6 +55,12 @@ export default function Index() {
   const keyWordLowerCase = useSharedValue("дом");
   const scale = useSharedValue(0.7);
   const rotateX = useSharedValue(Platform.OS === "ios" ? 40 : 5);
+  const leftColor = useSharedValue(Colors.blue);
+  const rightColor = useSharedValue(Colors.yellow);
+
+  const colors = useDerivedValue(() => {
+    return [leftColor.value, rightColor.value];
+  }, []);
 
   useEffect(() => {
     Voice.onSpeechError = onSpeechError;
@@ -88,10 +96,13 @@ export default function Index() {
     const upperCase = a.find((word) => word === keyWordUpperCase.value);
 
     if (lowerCase || upperCase) {
+      leftColor.value = withTiming("green");
+      rightColor.value = withTiming(Colors.orange);
       translateX.value = withSpring(-width);
       stopSpeechToText();
     } else {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      leftColor.value = withTiming("red");
+      rightColor.value = withTiming(Colors.orange);
       translateX.value = withSequence(
         withTiming(6, {
           easing: Easing.bezier(0.35, 0.7, 0.5, 0.7),
@@ -128,29 +139,40 @@ export default function Index() {
   }));
 
   return (
-    <GestureHandlerRootView
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: Colors.orange,
-      }}
-    >
-      {!toClose && (
-        <GestureDetector gesture={gesture}>
-          <Animated.View
-            exiting={SlideInRight}
-            style={[styles.card_container, style]}
-          >
-            <Text style={styles.card_text}>ДОМ</Text>
-          </Animated.View>
-        </GestureDetector>
-      )}
-      {results.map((w, i) => {
-        answerHandler(w);
-        return undefined;
-      })}
-    </GestureHandlerRootView>
+    <>
+      <StatusBar style="auto" />
+      <Canvas style={{ flex: 1 }}>
+        <Rect x={0} y={0} width={width} height={height}>
+          <LinearGradient
+            start={vec(0, 0)}
+            end={vec(width, height)}
+            colors={colors}
+          />
+        </Rect>
+      </Canvas>
+      <GestureHandlerRootView
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {!toClose && (
+          <GestureDetector gesture={gesture}>
+            <Animated.View
+              exiting={SlideInRight}
+              style={[styles.card_container, style]}
+            >
+              <Text style={styles.card_text}>ДОМ</Text>
+            </Animated.View>
+          </GestureDetector>
+        )}
+        {results.map((w, i) => {
+          answerHandler(w);
+          return undefined;
+        })}
+      </GestureHandlerRootView>
+    </>
   );
 }
 
