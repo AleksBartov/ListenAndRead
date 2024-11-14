@@ -96,13 +96,25 @@ export default function Index() {
     const upperCase = a.find((word) => word === keyWordUpperCase.value);
 
     if (lowerCase || upperCase) {
-      leftColor.value = withTiming("green");
-      rightColor.value = withTiming(Colors.orange);
+      leftColor.value = withTiming("green", {
+        easing: Easing.ease,
+        duration: 80,
+      });
+      rightColor.value = withTiming(Colors.orange, {
+        easing: Easing.ease,
+        duration: 80,
+      });
       translateX.value = withSpring(-width);
       stopSpeechToText();
     } else {
-      leftColor.value = withTiming("red");
-      rightColor.value = withTiming(Colors.orange);
+      leftColor.value = withTiming("red", {
+        easing: Easing.ease,
+        duration: 80,
+      });
+      rightColor.value = withTiming(Colors.orange, {
+        easing: Easing.ease,
+        duration: 80,
+      });
       translateX.value = withSequence(
         withTiming(6, {
           easing: Easing.bezier(0.35, 0.7, 0.5, 0.7),
@@ -152,7 +164,9 @@ export default function Index() {
       </Canvas>
       <GestureHandlerRootView
         style={{
-          flex: 1,
+          ...StyleSheet.absoluteFill,
+          width: width,
+          height: height,
           justifyContent: "center",
           alignItems: "center",
         }}
