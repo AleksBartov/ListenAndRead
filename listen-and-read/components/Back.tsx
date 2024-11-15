@@ -19,28 +19,25 @@ import {
   Group,
   RoundedRect,
   useSVG,
+  useImage,
+  Image,
 } from "@shopify/react-native-skia";
 import { drawNoisyCircle } from "@/Tools";
 import { Colors } from "@/constants/Colors";
 
-const Back = ({ rotateX, rotateYBack, translateX, scale, zIndexBack }) => {
-  const toClose = useSharedValue(false);
-  const path = useSharedValue(Skia.Path.Make());
-  const CARD_SQUER = Math.floor(CARD_HEIGHT * CARD_WIDTH);
-
-  useAnimatedReaction(
-    () => toClose.value,
-    (e) => {
-      if (e) translateX.value = withTiming(4 * CARD_WIDTH, { duration: 1000 });
-    }
+const Back = ({ rotateX, rotateYBack, scale, zIndexBack, toClose }) => {
+  const milk = useImage(require("../assets/images/milk.png"));
+  const path = useSharedValue(
+    drawNoisyCircle({ x: CARD_WIDTH / 2, y: CARD_HEIGHT / 2 })
   );
+  const CARD_SQUER = Math.floor(CARD_HEIGHT * CARD_WIDTH);
 
   const handelPathLenght = (p) => {
     "worklet";
     const { width, height } = p;
     const DRAWN_SQUER = Math.floor(width * height);
     const PERSENTAGE = Math.floor((DRAWN_SQUER / CARD_SQUER) * 100);
-    if (PERSENTAGE > 90) toClose.value = true;
+    if (PERSENTAGE > 100) toClose.value = true;
     console.log(`DRIWEN_PROSENTAGE: ${PERSENTAGE}`);
   };
 
@@ -69,7 +66,6 @@ const Back = ({ rotateX, rotateYBack, translateX, scale, zIndexBack }) => {
       { perspective: 800 },
       { rotateX: `${rotateX.value}deg` },
       { rotateY: `${rotateYBack.value}deg` },
-      { translateX: translateX.value },
       { scale: scale.value },
     ],
     zIndex: zIndexBack.value,
@@ -108,13 +104,13 @@ const Back = ({ rotateX, rotateYBack, translateX, scale, zIndexBack }) => {
             </Group>
           }
         >
-          <RoundedRect
+          <Image
+            image={milk}
+            fit="cover"
             x={0}
             y={0}
             width={CARD_WIDTH}
             height={CARD_HEIGHT}
-            color={Colors.yellow}
-            r={16}
           />
         </Mask>
       </Canvas>

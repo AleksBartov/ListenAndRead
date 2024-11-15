@@ -1,10 +1,14 @@
 import { Colors } from "@/constants/Colors";
-import { StyleSheet, useWindowDimensions } from "react-native";
+import { FlatList, StyleSheet, useWindowDimensions } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { useSharedValue, useDerivedValue } from "react-native-reanimated";
+import Animated, {
+  useSharedValue,
+  useDerivedValue,
+} from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
 import { Canvas, LinearGradient, Rect, vec } from "@shopify/react-native-skia";
 import Card from "@/components/Card";
+import { CARDS } from "@/constants/Sizes";
 
 const styles = StyleSheet.create({});
 
@@ -39,7 +43,17 @@ export default function Index() {
           alignItems: "center",
         }}
       >
-        <Card rightColor={rightColor} leftColor={leftColor} />
+        {CARDS.map((w, i) => {
+          return (
+            <Card
+              key={i}
+              rightColor={rightColor}
+              leftColor={leftColor}
+              item={w}
+              index={i}
+            />
+          );
+        })}
       </GestureHandlerRootView>
     </>
   );

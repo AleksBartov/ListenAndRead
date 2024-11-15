@@ -1,8 +1,13 @@
 import { Platform, StyleSheet } from "react-native";
 import React, { useEffect, useState } from "react";
-import {
+import Animated, {
   Easing,
+  runOnJS,
+  useAnimatedReaction,
+  useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
+  withDelay,
   withRepeat,
   withSequence,
   withSpring,
@@ -13,14 +18,16 @@ import Voice from "@react-native-voice/voice";
 import { Colors } from "@/constants/Colors";
 import Front from "./Front";
 import Back from "./Back";
+import { CARD_HEIGHT, CARD_WIDTH } from "@/constants/Sizes";
 
-const Card = ({ rightColor, leftColor }) => {
+const Card = ({ rightColor, leftColor, item, index }) => {
   let [started, setStarted] = useState(false);
   let [results, setResults] = useState([]);
+  const toClose = useSharedValue(false);
+
   const translateX = useSharedValue(0);
-  const matched = useSharedValue(false);
-  const keyWordUpperCase = useSharedValue("Дом");
-  const keyWordLowerCase = useSharedValue("дом");
+  const capitalized = item.text[0].toUpperCase() + item.text.slice(1);
+  const keyWordUpperCase = useSharedValue(capitalized);
   const scale = useSharedValue(0.7);
   const rotateX = useSharedValue(Platform.OS === "ios" ? 40 : 5);
   const rotateY = useSharedValue(0);
@@ -31,7 +38,6 @@ const Card = ({ rightColor, leftColor }) => {
   useEffect(() => {
     Voice.onSpeechError = onSpeechError;
     Voice.onSpeechResults = onSpeechResults;
-
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
     };
@@ -55,15 +61,29 @@ const Card = ({ rightColor, leftColor }) => {
     console.log(error);
   };
 
+  useAnimatedReaction(
+    () => toClose.value,
+    (e) => {
+      if (e)
+        translateX.value = withDelay(
+          1500,
+          withTiming(4 * CARD_WIDTH, { duration: 1000 })
+        );
+
+      // runOnJS(stopSpeechToText)();
+    },
+    [toClose.value, translateX.value]
+  );
+
   const answerHandler = (answer: string) => {
     let a = answer.split(" ");
-    // console.log(a);
-    const lowerCase = a.find((word) => word === keyWordLowerCase.value);
-    const upperCase = a.find((word) => word === keyWordUpperCase.value);
+    console.log(a);
+    const lowerCase = a.find(
+      (word) => word === item.text || word === keyWordUpperCase.value
+    );
 
-    if (lowerCase || upperCase) {
+    if (lowerCase) {
       stopSpeechToText();
-      matched.value = true;
       leftColor.value = withTiming("green", {
         easing: Easing.ease,
         duration: 80,
@@ -105,21 +125,25 @@ const Card = ({ rightColor, leftColor }) => {
     }
   };
 
+  const style = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+  }));
+
   return (
-    <>
+    <Animated.View style={[styles.card_container, style]}>
       <Front
         startSpeechToText={startSpeechToText}
         rotateX={rotateX}
         rotateY={rotateY}
-        translateX={translateX}
         scale={scale}
         zIndexFront={zIndexFront}
+        keyWordLowerCase={item.text}
       />
 
       <Back
+        toClose={toClose}
         rotateX={rotateX}
         rotateYBack={rotateYBack}
-        translateX={translateX}
         scale={scale}
         zIndexBack={zIndexBack}
       />
@@ -128,10 +152,18 @@ const Card = ({ rightColor, leftColor }) => {
         answerHandler(w);
         return undefined;
       })}
-    </>
+    </Animated.View>
   );
 };
 
 export default Card;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  card_container: {
+    position: "absolute",
+    width: CARD_WIDTH,
+    height: CARD_HEIGHT,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});

@@ -3,8 +3,8 @@ import React from "react";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
-  SlideInRight,
   useAnimatedStyle,
+  useSharedValue,
   withSpring,
 } from "react-native-reanimated";
 import { Colors } from "@/constants/Colors";
@@ -14,33 +14,35 @@ const Front = ({
   startSpeechToText,
   rotateX,
   rotateY,
-  translateX,
   scale,
   zIndexFront,
+  keyWordLowerCase,
 }) => {
+  const started = useSharedValue(false);
   const style = useAnimatedStyle(() => ({
     transform: [
       { perspective: 800 },
       { rotateX: `${rotateX.value}deg` },
       { rotateY: `${rotateY.value}deg` },
-      { translateX: translateX.value },
       { scale: scale.value },
     ],
     zIndex: zIndexFront.value,
   }));
 
-  const gestureFront = Gesture.Tap().onEnd(() => {
-    scale.value = withSpring(1);
-    rotateX.value = withSpring(0);
-    runOnJS(startSpeechToText)();
-  });
+  const gestureFront = Gesture.Tap()
+    .onBegin(() => {
+      if (started.value) return;
+    })
+    .onEnd(() => {
+      scale.value = withSpring(1);
+      rotateX.value = withSpring(0);
+      runOnJS(startSpeechToText)();
+      started.value = true;
+    });
   return (
     <GestureDetector gesture={gestureFront}>
-      <Animated.View
-        exiting={SlideInRight}
-        style={[styles.card_container, style]}
-      >
-        <Text style={styles.card_text}>ДОМ</Text>
+      <Animated.View style={[styles.card_container, style]}>
+        <Text style={styles.card_text}>{keyWordLowerCase}</Text>
       </Animated.View>
     </GestureDetector>
   );
