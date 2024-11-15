@@ -3,7 +3,7 @@ import { createNoise2D } from "simplex-noise";
 
 export const drawNoisyCircle = (c: Vector) => {
   const F = 1;
-  const R = 6;
+  const R = 15;
   const sample = 50;
   const noise = createNoise2D();
   const path = Skia.Path.Make();
