@@ -9,11 +9,17 @@ import { StatusBar } from "expo-status-bar";
 import { Canvas, LinearGradient, Rect, vec } from "@shopify/react-native-skia";
 import Card from "@/components/Card";
 import { CARDS } from "@/constants/Sizes";
+import { useState } from "react";
 
 const styles = StyleSheet.create({});
 
 export default function Index() {
   const { width, height } = useWindowDimensions();
+  const [cards, setCards] = useState(
+    new Array(2).fill(null).map((_, i) => {
+      return { id: i + 1, text: "так" };
+    })
+  );
 
   const leftColor = useSharedValue(Colors.blue);
   const rightColor = useSharedValue(Colors.yellow);
@@ -43,7 +49,7 @@ export default function Index() {
           alignItems: "center",
         }}
       >
-        {CARDS.map((w, i) => {
+        {cards.map((w, i) => {
           return (
             <Card
               key={i}
@@ -51,6 +57,10 @@ export default function Index() {
               leftColor={leftColor}
               item={w}
               index={i}
+              toRemove={() => {
+                cards.splice(i, 1);
+                setCards([...cards]);
+              }}
             />
           );
         })}

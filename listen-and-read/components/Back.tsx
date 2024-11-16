@@ -61,15 +61,18 @@ const Back = ({ rotateX, rotateYBack, scale, zIndexBack, toClose }) => {
     },
   });
 
-  const styleBack = useAnimatedStyle(() => ({
-    transform: [
-      { perspective: 800 },
-      { rotateX: `${rotateX.value}deg` },
-      { rotateY: `${rotateYBack.value}deg` },
-      { scale: scale.value },
-    ],
-    zIndex: zIndexBack.value,
-  }));
+  const styleBack = useAnimatedStyle(
+    () => ({
+      transform: [
+        { perspective: 800 },
+        { rotateX: `${rotateX.value}deg` },
+        { rotateY: `${rotateYBack.value}deg` },
+        { scale: scale.value },
+      ],
+      zIndex: zIndexBack.value,
+    }),
+    [rotateX.value, rotateYBack.value, scale.value, zIndexBack.value]
+  );
 
   return (
     <Animated.View

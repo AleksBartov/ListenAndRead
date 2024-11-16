@@ -19,26 +19,26 @@ const Front = ({
   keyWordLowerCase,
 }) => {
   const started = useSharedValue(false);
-  const style = useAnimatedStyle(() => ({
-    transform: [
-      { perspective: 800 },
-      { rotateX: `${rotateX.value}deg` },
-      { rotateY: `${rotateY.value}deg` },
-      { scale: scale.value },
-    ],
-    zIndex: zIndexFront.value,
-  }));
+  const style = useAnimatedStyle(
+    () => ({
+      transform: [
+        { perspective: 800 },
+        { rotateX: `${rotateX.value}deg` },
+        { rotateY: `${rotateY.value}deg` },
+        { scale: scale.value },
+      ],
+      zIndex: zIndexFront.value,
+    }),
+    [rotateX.value, rotateY.value, scale.value, zIndexFront.value]
+  );
 
-  const gestureFront = Gesture.Tap()
-    .onBegin(() => {
-      if (started.value) return;
-    })
-    .onEnd(() => {
-      scale.value = withSpring(1);
-      rotateX.value = withSpring(0);
-      runOnJS(startSpeechToText)();
-      started.value = true;
-    });
+  const gestureFront = Gesture.Tap().onEnd(() => {
+    if (started.value) return null;
+    scale.value = withSpring(1);
+    rotateX.value = withSpring(0);
+    runOnJS(startSpeechToText)();
+    started.value = true;
+  });
   return (
     <GestureDetector gesture={gestureFront}>
       <Animated.View style={[styles.card_container, style]}>

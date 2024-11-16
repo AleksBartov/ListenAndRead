@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Animated, {
   Easing,
   runOnJS,
+  SlideOutRight,
   useAnimatedReaction,
   useAnimatedStyle,
   useDerivedValue,
@@ -20,9 +21,9 @@ import Front from "./Front";
 import Back from "./Back";
 import { CARD_HEIGHT, CARD_WIDTH } from "@/constants/Sizes";
 
-const Card = ({ rightColor, leftColor, item, index }) => {
+const Card = ({ rightColor, leftColor, item, index, toRemove }) => {
   let [started, setStarted] = useState(false);
-  let [results, setResults] = useState([]);
+  let [results, setResults] = useState([""]);
   const toClose = useSharedValue(false);
 
   const translateX = useSharedValue(0);
@@ -46,15 +47,18 @@ const Card = ({ rightColor, leftColor, item, index }) => {
   const startSpeechToText = async () => {
     await Voice.start("ru");
     setStarted(true);
+    console.log("mic started");
   };
 
   const stopSpeechToText = async () => {
     await Voice.stop();
     setStarted(false);
+    console.log("mic stoped");
   };
 
   const onSpeechResults = (result) => {
     setResults(result.value);
+    answerHandler(result.value);
   };
 
   const onSpeechError = (error) => {
@@ -64,19 +68,19 @@ const Card = ({ rightColor, leftColor, item, index }) => {
   useAnimatedReaction(
     () => toClose.value,
     (e) => {
-      if (e)
+      if (e) {
         translateX.value = withDelay(
-          1500,
+          1200,
           withTiming(4 * CARD_WIDTH, { duration: 1000 })
         );
-
-      // runOnJS(stopSpeechToText)();
+        runOnJS(toRemove)();
+      }
     },
     [toClose.value, translateX.value]
   );
 
-  const answerHandler = (answer: string) => {
-    let a = answer.split(" ");
+  const answerHandler = (answer) => {
+    let a = [...answer][0].split(" ");
     console.log(a);
     const lowerCase = a.find(
       (word) => word === item.text || word === keyWordUpperCase.value
@@ -130,7 +134,10 @@ const Card = ({ rightColor, leftColor, item, index }) => {
   }));
 
   return (
-    <Animated.View style={[styles.card_container, style]}>
+    <Animated.View
+      exiting={SlideOutRight.duration(2000)}
+      style={[styles.card_container, style]}
+    >
       <Front
         startSpeechToText={startSpeechToText}
         rotateX={rotateX}
@@ -147,11 +154,6 @@ const Card = ({ rightColor, leftColor, item, index }) => {
         scale={scale}
         zIndexBack={zIndexBack}
       />
-
-      {results.map((w, i) => {
-        answerHandler(w);
-        return undefined;
-      })}
     </Animated.View>
   );
 };
