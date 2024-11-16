@@ -25,6 +25,7 @@ const Card = ({ rightColor, leftColor, item, index, toRemove }) => {
   let [started, setStarted] = useState(false);
   let [results, setResults] = useState([""]);
   const toClose = useSharedValue(false);
+  const toDestroy = useSharedValue(0);
 
   const translateX = useSharedValue(0);
   const capitalized = item.text[0].toUpperCase() + item.text.slice(1);
@@ -70,9 +71,19 @@ const Card = ({ rightColor, leftColor, item, index, toRemove }) => {
     (e) => {
       if (e) {
         translateX.value = withDelay(
-          1200,
+          900,
           withTiming(4 * CARD_WIDTH, { duration: 1000 })
         );
+        toDestroy.value = withTiming(1, { duration: 2000 });
+      }
+    },
+    [toClose.value, translateX.value]
+  );
+
+  useAnimatedReaction(
+    () => toDestroy.value,
+    (e) => {
+      if (e === 1) {
         runOnJS(toRemove)();
       }
     },
@@ -134,10 +145,7 @@ const Card = ({ rightColor, leftColor, item, index, toRemove }) => {
   }));
 
   return (
-    <Animated.View
-      exiting={SlideOutRight.duration(2000)}
-      style={[styles.card_container, style]}
-    >
+    <Animated.View style={[styles.card_container, style]}>
       <Front
         startSpeechToText={startSpeechToText}
         rotateX={rotateX}

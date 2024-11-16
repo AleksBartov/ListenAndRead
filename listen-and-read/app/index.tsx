@@ -17,7 +17,7 @@ export default function Index() {
   const { width, height } = useWindowDimensions();
   const [cards, setCards] = useState(
     new Array(2).fill(null).map((_, i) => {
-      return { id: i + 1, text: "так" };
+      return { id: i + 1, text: "ма" };
     })
   );
 
