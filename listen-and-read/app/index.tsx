@@ -68,6 +68,10 @@ const index = () => {
     return interpolate(progress.value, [0, 1], [0.9, 1]);
   }, []);
 
+  const firstBlur = useDerivedValue(() => {
+    return 2 * progress.value;
+  }, []);
+
   const rStyle = useAnimatedStyle(() => {
     return {
       transform: [
@@ -231,17 +235,18 @@ const index = () => {
           ]}
         >
           <Canvas style={{ width: cardWidth + 150, height: cardHeight + 150 }}>
-            <RoundedRect
-              x={75}
-              y={75}
-              width={cardWidth}
-              height={cardHeight}
-              r={25}
-              color={"snow"}
-            >
-              <Blur blur={2} />
+            <Group>
+              <RoundedRect
+                x={75}
+                y={75}
+                width={cardWidth}
+                height={cardHeight}
+                r={25}
+                color={"snow"}
+              />
+              <Blur blur={firstBlur} />
               <Shadow dx={5} dy={5} blur={6} color={"rgba(0,0,0,0.4)"} />
-            </RoundedRect>
+            </Group>
           </Canvas>
         </Animated.View>
       </View>
