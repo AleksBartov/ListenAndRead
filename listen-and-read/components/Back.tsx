@@ -21,12 +21,14 @@ import {
   useSVG,
   useImage,
   Image,
+  Shadow,
 } from "@shopify/react-native-skia";
 import { drawNoisyCircle } from "@/Tools";
 import { Colors } from "@/constants/Colors";
 
 const Back = ({ rotateX, rotateYBack, scale, zIndexBack, toClose }) => {
   const milk = useImage(require("../assets/images/milk.png"));
+  const logogo = useImage(require("../assets/images/logogo.png"));
   const path = useSharedValue(
     drawNoisyCircle({ x: CARD_WIDTH / 2, y: CARD_HEIGHT / 2 })
   );
@@ -61,17 +63,21 @@ const Back = ({ rotateX, rotateYBack, scale, zIndexBack, toClose }) => {
     },
   });
 
+  const transform = useDerivedValue(() => {
+    return [
+      { perspective: 800 },
+      { rotateX: `${rotateX.value}deg` },
+      { rotateY: `${rotateYBack.value}deg` },
+      { scale: scale.value },
+    ];
+  }, []);
+
   const styleBack = useAnimatedStyle(
     () => ({
-      transform: [
-        { perspective: 800 },
-        { rotateX: `${rotateX.value}deg` },
-        { rotateY: `${rotateYBack.value}deg` },
-        { scale: scale.value },
-      ],
+      transform: transform.value,
       zIndex: zIndexBack.value,
     }),
-    [rotateX.value, rotateYBack.value, scale.value, zIndexBack.value]
+    []
   );
 
   return (
@@ -103,12 +109,14 @@ const Back = ({ rotateX, rotateYBack, scale, zIndexBack, toClose }) => {
                 color="black"
                 r={16}
               />
-              <Path path={path} color="white" />
+              <Path path={path} color="white">
+                <Shadow dx={3} dy={3} blur={3} color="rgba(0,0,0,0.6)" inner />
+              </Path>
             </Group>
           }
         >
           <Image
-            image={milk}
+            image={logogo}
             fit="cover"
             x={0}
             y={0}

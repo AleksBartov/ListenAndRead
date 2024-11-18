@@ -140,9 +140,12 @@ const Card = ({ rightColor, leftColor, item, index, toRemove }) => {
     }
   };
 
-  const style = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-  }));
+  const style = useAnimatedStyle(
+    () => ({
+      transform: [{ translateX: translateX.value }],
+    }),
+    [translateX]
+  );
 
   return (
     <Animated.View style={[styles.card_container, style]}>

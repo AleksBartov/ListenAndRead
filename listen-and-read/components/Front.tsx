@@ -4,6 +4,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
@@ -19,17 +20,20 @@ const Front = ({
   keyWordLowerCase,
 }) => {
   const started = useSharedValue(false);
+  const transform = useDerivedValue(() => {
+    return [
+      { perspective: 800 },
+      { rotateX: `${rotateX.value}deg` },
+      { rotateY: `${rotateY.value}deg` },
+      { scale: scale.value },
+    ];
+  }, []);
   const style = useAnimatedStyle(
     () => ({
-      transform: [
-        { perspective: 800 },
-        { rotateX: `${rotateX.value}deg` },
-        { rotateY: `${rotateY.value}deg` },
-        { scale: scale.value },
-      ],
+      transform: transform.value,
       zIndex: zIndexFront.value,
     }),
-    [rotateX.value, rotateY.value, scale.value, zIndexFront.value]
+    []
   );
 
   const gestureFront = Gesture.Tap().onEnd(() => {
