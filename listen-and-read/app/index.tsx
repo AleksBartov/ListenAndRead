@@ -1,4 +1,4 @@
-import { StyleSheet, useWindowDimensions, View } from "react-native";
+import { Button, StyleSheet, useWindowDimensions, View } from "react-native";
 import React, { useEffect } from "react";
 import {
   Blur,
@@ -108,10 +108,28 @@ const index = () => {
           ...StyleSheet.absoluteFill,
         }}
       >
+        <ReanimCard progress={progress} index={5} />
         <ReanimCard progress={progress} index={4} />
         <ReanimCard progress={progress} index={3} />
         <ReanimCard progress={progress} index={2} />
         <ReanimCard progress={progress} index={1} />
+        <View
+          style={{
+            flexDirection: "row",
+            position: "absolute",
+            bottom: 50,
+            width: width,
+            alignItems: "center",
+            justifyContent: "space-around",
+          }}
+        >
+          <View>
+            <Button title="перевернуть" />
+          </View>
+          <View>
+            <Button title="удалить" />
+          </View>
+        </View>
       </View>
     </>
   );

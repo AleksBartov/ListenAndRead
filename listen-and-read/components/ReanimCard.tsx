@@ -24,7 +24,15 @@ const ReanimCard = ({ progress, index }) => {
   const startY = 40 * index;
   const startBlur = 2 * index;
   const startScale =
-    index === 1 ? 0.9 : index === 2 ? 0.8 : index === 3 ? 0.7 : 0.6;
+    index === 1
+      ? 0.9
+      : index === 2
+      ? 0.8
+      : index === 3
+      ? 0.7
+      : index === 4
+      ? 0.6
+      : 0.5;
   const Y = useSharedValue(startY);
 
   const firstScale = useDerivedValue(() => {
