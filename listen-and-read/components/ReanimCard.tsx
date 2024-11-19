@@ -30,6 +30,7 @@ const ReanimCard = ({
   timeToDelete,
   zIndex,
   removeCard,
+  cardsArray,
 }) => {
   const { width, height } = useWindowDimensions();
   const cardWidth = width * 0.8;
@@ -47,7 +48,7 @@ const ReanimCard = ({
       ? 0.6
       : 0.5;
   const Y = useSharedValue(startY);
-  const isActive = useSharedValue(progress.value === position);
+  const isActive = useSharedValue(cardsArray[0].position === position);
   const rotateY = useSharedValue(0);
   const workingCard = useSharedValue(false);
 
@@ -90,10 +91,12 @@ const ReanimCard = ({
   useAnimatedReaction(
     () => timeToDelete.value,
     (v) => {
-      if (v && workingCard.value) {
+      if (v && workingCard.value && isActive.value) {
         runOnJS(removeCard)(position);
         isActive.value = false;
         workingCard.value = false;
+        timeToDelete.value = false;
+        timeToRotate.value = false;
         progress.value = 1;
         console.log(`test from ${position}`);
       }
@@ -120,7 +123,7 @@ const ReanimCard = ({
       exiting={SlideOutRight.duration(1000)}
       layout={LinearTransition.delay(200)}
       onTouchEnd={() => {
-        progress.value = withSpring(2);
+        progress.value = withSpring(progress.value + 1);
         workingCard.value = true;
       }}
       style={[

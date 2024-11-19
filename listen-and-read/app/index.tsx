@@ -37,14 +37,10 @@ const endColors = [
   "rgba(252,176,69,0.4)",
 ];
 
-const cardsArrayStatic = new Array(5).fill(null).map((_, i) => {
-  return { position: i + 1 };
-});
-
 const index = () => {
   const { width, height } = useWindowDimensions();
   const [cardsArray, setCardsArray] = useState(
-    new Array(3).fill(null).map((_, i) => {
+    new Array(5).fill(null).map((_, i) => {
       return { position: i + 1 };
     })
   );
@@ -75,7 +71,7 @@ const index = () => {
 
   const rotateHandler = () => (timeToRotate.value = true);
   const deleteHandler = () => (timeToDelete.value = true);
-  const onDelete = useCallback((cardPosition) => {
+  const onDelete = useCallback((cardPosition: number) => {
     console.log(`index says: ${cardPosition}`);
     setCardsArray((cards) => {
       return cards.filter((item) => item.position !== cardPosition);
@@ -109,6 +105,7 @@ const index = () => {
               timeToDelete={timeToDelete}
               zIndex={-i}
               removeCard={onDelete}
+              cardsArray={cardsArray}
             />
           );
         })}
