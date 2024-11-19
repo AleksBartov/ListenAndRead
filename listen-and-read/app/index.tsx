@@ -44,14 +44,14 @@ const cardsArrayStatic = new Array(5).fill(null).map((_, i) => {
 const index = () => {
   const { width, height } = useWindowDimensions();
   const [cardsArray, setCardsArray] = useState(
-    new Array(3).fill(null).map((_, i) => {
+    new Array(2).fill(null).map((_, i) => {
       return { position: i + 1 };
     })
   );
   const cardWidth = width * 0.8;
   const cardHeight = cardWidth * 1.618;
 
-  const progress = useSharedValue(1);
+  const progress = useSharedValue(0);
   const timeToRotate = useSharedValue(false);
   const timeToDelete = useSharedValue(false);
 
@@ -99,6 +99,7 @@ const index = () => {
         }}
       >
         {cardsArray.map((c, i) => {
+          console.log(`after rerendering: ${c.position}, and ${i}`);
           return (
             <ReanimCard
               key={i}
@@ -109,6 +110,7 @@ const index = () => {
               timeToDelete={timeToDelete}
               zIndex={-i}
               removeCard={onDelete}
+              cardsArray={cardsArray}
             />
           );
         })}

@@ -1,5 +1,5 @@
 import { StyleSheet, useWindowDimensions } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import Animated, {
   FadeIn,
   interpolate,
@@ -22,6 +22,9 @@ import {
   Shadow,
 } from "@shopify/react-native-skia";
 
+const transYStep = 33;
+const scaleStep = 0.1;
+
 const ReanimCard = ({
   progress,
   position,
@@ -30,53 +33,40 @@ const ReanimCard = ({
   timeToDelete,
   zIndex,
   removeCard,
+  cardsArray,
 }) => {
   const { width, height } = useWindowDimensions();
   const cardWidth = width * 0.8;
   const cardHeight = cardWidth * 1.618;
-  const startY = 40 * position;
-  const startBlur = 2 * position;
-  const startScale =
-    position === 1
-      ? 0.9
-      : position === 2
-      ? 0.8
-      : position === 3
-      ? 0.7
-      : position === 4
-      ? 0.6
-      : 0.5;
-  const Y = useSharedValue(startY);
-  const isActive = useSharedValue(progress.value === position);
+  const centerCoords = {
+    x: width / 2 - cardWidth / 2 - 75,
+    y: height / 2 - cardHeight / 2 - 75,
+  };
+
+  const isActive = useSharedValue(index === 0);
+  const translateY = useSharedValue(0);
   const rotateY = useSharedValue(0);
-  const workingCard = useSharedValue(false);
+  const scale = useSharedValue(0);
+  const blur = useSharedValue(index === 0 ? 0 : 3);
 
-  const firstScale = useDerivedValue(() => {
-    return interpolate(
-      progress.value,
-      [1, 2, 3, 4, 5],
-      [
-        startScale,
-        startScale + 0.1,
-        startScale + 0.2,
-        startScale + 0.3,
-        startScale + 0.4,
-      ]
+  useEffect(() => {
+    translateY.value = withTiming(
+      centerCoords.y - Math.min(index * transYStep, 200) - transYStep
     );
-  }, []);
+    scale.value = withTiming(Math.max(1 - index * scaleStep, 0.3) - scaleStep);
+    timeToDelete.value = false;
+    console.log("fires");
+  }, [cardsArray]);
 
-  const firstTransY = useDerivedValue(() => {
-    Y.value = interpolate(
-      progress.value,
-      [1, 2, 3, 4, 5],
-      [startY, startY - 40, startY - 80, startY - 120, startY - 160]
-    );
-    return height / 2 - cardHeight / 2 - Y.value - 75;
-  }, []);
-
-  const firstBlur = useDerivedValue(() => {
-    return startBlur - progress.value;
-  }, []);
+  useAnimatedReaction(
+    () => progress.value,
+    (v) => {
+      if (v && isActive.value) {
+        translateY.value = withSpring(centerCoords.y);
+        scale.value = withSpring(1);
+      }
+    }
+  );
 
   useAnimatedReaction(
     () => timeToRotate.value,
@@ -90,12 +80,11 @@ const ReanimCard = ({
   useAnimatedReaction(
     () => timeToDelete.value,
     (v) => {
-      if (v && workingCard.value) {
+      if (v && isActive.value) {
         runOnJS(removeCard)(position);
         isActive.value = false;
-        workingCard.value = false;
-        progress.value = 1;
-        console.log(`test from ${position}`);
+        progress.value = false;
+        timeToRotate.value = false;
       }
     }
   );
@@ -103,13 +92,13 @@ const ReanimCard = ({
   const rStyle = useAnimatedStyle(() => {
     return {
       transform: [
-        { perspective: 1000 },
+        { perspective: 1500 },
         {
-          translateX: width / 2 - cardWidth / 2 - 75,
+          translateX: centerCoords.x,
         },
-        { translateY: firstTransY.value },
+        { translateY: translateY.value },
         { rotateY: `${rotateY.value}deg` },
-        { scale: firstScale.value },
+        { scale: scale.value },
       ],
     };
   }, []);
@@ -120,8 +109,7 @@ const ReanimCard = ({
       exiting={SlideOutRight.duration(1000)}
       layout={LinearTransition.delay(200)}
       onTouchEnd={() => {
-        progress.value = withSpring(2);
-        workingCard.value = true;
+        if (isActive.value) progress.value = true;
       }}
       style={[
         {
@@ -143,7 +131,7 @@ const ReanimCard = ({
             r={25}
             color={position % 2 ? "snow" : "cyan"}
           />
-          <Blur blur={firstBlur} />
+          <Blur blur={blur.value} />
           <Shadow dx={5} dy={5} blur={6} color={"rgba(0,0,0,0.4)"} />
         </Group>
       </Canvas>
