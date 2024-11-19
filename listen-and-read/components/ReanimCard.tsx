@@ -3,6 +3,7 @@ import React from "react";
 import Animated, {
   FadeIn,
   interpolate,
+  LinearTransition,
   runOnJS,
   SlideOutRight,
   useAnimatedReaction,
@@ -23,8 +24,9 @@ import {
 
 const ReanimCard = ({
   progress,
-  index,
+  position,
   timeToRotate,
+  index,
   timeToDelete,
   zIndex,
   removeCard,
@@ -32,28 +34,43 @@ const ReanimCard = ({
   const { width, height } = useWindowDimensions();
   const cardWidth = width * 0.8;
   const cardHeight = cardWidth * 1.618;
-  const startY = 40 * index;
-  const startBlur = 2 * index;
+  const startY = 40 * position;
+  const startBlur = 2 * position;
   const startScale =
-    index === 1
+    position === 1
       ? 0.9
-      : index === 2
+      : position === 2
       ? 0.8
-      : index === 3
+      : position === 3
       ? 0.7
-      : index === 4
+      : position === 4
       ? 0.6
       : 0.5;
   const Y = useSharedValue(startY);
-  const isActive = useSharedValue(progress.value === index);
+  const isActive = useSharedValue(progress.value === position);
   const rotateY = useSharedValue(0);
+  const workingCard = useSharedValue(false);
 
   const firstScale = useDerivedValue(() => {
-    return interpolate(progress.value, [1, 2], [startScale, startScale + 0.1]);
+    return interpolate(
+      progress.value,
+      [1, 2, 3, 4, 5],
+      [
+        startScale,
+        startScale + 0.1,
+        startScale + 0.2,
+        startScale + 0.3,
+        startScale + 0.4,
+      ]
+    );
   }, []);
 
   const firstTransY = useDerivedValue(() => {
-    Y.value = interpolate(progress.value, [1, 2], [startY, startY - 40]);
+    Y.value = interpolate(
+      progress.value,
+      [1, 2, 3, 4, 5],
+      [startY, startY - 40, startY - 80, startY - 120, startY - 160]
+    );
     return height / 2 - cardHeight / 2 - Y.value - 75;
   }, []);
 
@@ -73,8 +90,12 @@ const ReanimCard = ({
   useAnimatedReaction(
     () => timeToDelete.value,
     (v) => {
-      if (v && isActive.value) {
-        runOnJS(removeCard)();
+      if (v && workingCard.value) {
+        runOnJS(removeCard)(position);
+        isActive.value = false;
+        workingCard.value = false;
+        progress.value = 1;
+        console.log(`test from ${position}`);
       }
     }
   );
@@ -95,13 +116,16 @@ const ReanimCard = ({
 
   return (
     <Animated.View
-      entering={FadeIn.delay(index * 250)}
+      entering={FadeIn.delay(position * 250)}
       exiting={SlideOutRight.duration(1000)}
-      onTouchEnd={() => (progress.value = withSpring(2))}
+      layout={LinearTransition.delay(200)}
+      onTouchEnd={() => {
+        progress.value = withSpring(2);
+        workingCard.value = true;
+      }}
       style={[
         {
           ...StyleSheet.absoluteFill,
-
           width: cardWidth + 150,
           height: cardHeight + 150,
           zIndex: zIndex,
@@ -117,7 +141,7 @@ const ReanimCard = ({
             width={cardWidth}
             height={cardHeight}
             r={25}
-            color={index % 2 ? "snow" : "cyan"}
+            color={position % 2 ? "snow" : "cyan"}
           />
           <Blur blur={firstBlur} />
           <Shadow dx={5} dy={5} blur={6} color={"rgba(0,0,0,0.4)"} />

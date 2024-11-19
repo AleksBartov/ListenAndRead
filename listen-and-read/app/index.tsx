@@ -1,5 +1,5 @@
 import { Button, StyleSheet, useWindowDimensions, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Blur,
   Canvas,
@@ -38,12 +38,16 @@ const endColors = [
 ];
 
 const cardsArrayStatic = new Array(5).fill(null).map((_, i) => {
-  return i;
+  return { position: i + 1 };
 });
 
 const index = () => {
   const { width, height } = useWindowDimensions();
-  const [cardsArray, setCardsArray] = useState(cardsArrayStatic);
+  const [cardsArray, setCardsArray] = useState(
+    new Array(3).fill(null).map((_, i) => {
+      return { position: i + 1 };
+    })
+  );
   const cardWidth = width * 0.8;
   const cardHeight = cardWidth * 1.618;
 
@@ -69,35 +73,14 @@ const index = () => {
     ];
   });
 
-  const firstScale = useDerivedValue(() => {
-    return interpolate(progress.value, [1, 2], [0.9, 1]);
-  }, []);
-
-  const Y = useSharedValue(40);
-  const firstTransY = useDerivedValue(() => {
-    Y.value = interpolate(progress.value, [1, 2], [40, 0]);
-    return height / 2 - cardHeight / 2 - Y.value - 75;
-  }, []);
-
-  const firstBlur = useDerivedValue(() => {
-    return 2 - progress.value;
-  }, []);
-
-  const rStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        { perspective: 300 },
-        {
-          translateX: width / 2 - cardWidth / 2 - 75,
-        },
-        { translateY: firstTransY.value },
-        { scale: firstScale.value },
-      ],
-    };
-  }, []);
-
   const rotateHandler = () => (timeToRotate.value = true);
   const deleteHandler = () => (timeToDelete.value = true);
+  const onDelete = useCallback((cardPosition) => {
+    console.log(`index says: ${cardPosition}`);
+    setCardsArray((cards) => {
+      return cards.filter((item) => item.position !== cardPosition);
+    });
+  }, []);
 
   return (
     <>
@@ -119,15 +102,13 @@ const index = () => {
           return (
             <ReanimCard
               key={i}
+              index={i}
               progress={progress}
-              index={i + 1}
+              position={c.position}
               timeToRotate={timeToRotate}
               timeToDelete={timeToDelete}
               zIndex={-i}
-              removeCard={() => {
-                cardsArray.splice(i, 1);
-                setCardsArray([...cardsArray]);
-              }}
+              removeCard={onDelete}
             />
           );
         })}
