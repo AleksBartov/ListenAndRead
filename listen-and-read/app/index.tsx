@@ -1,5 +1,5 @@
 import { Button, StyleSheet, useWindowDimensions, View } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Blur,
   Canvas,
@@ -37,15 +37,19 @@ const endColors = [
   "rgba(252,176,69,0.4)",
 ];
 
+const cardsArrayStatic = new Array(5).fill(null).map((_, i) => {
+  return i;
+});
+
 const index = () => {
   const { width, height } = useWindowDimensions();
+  const [cardsArray, setCardsArray] = useState(cardsArrayStatic);
   const cardWidth = width * 0.8;
   const cardHeight = cardWidth * 1.618;
 
   const progress = useSharedValue(1);
-  const translateX = useSharedValue(0);
-  const translateY = useSharedValue(0);
-  const scale = useSharedValue(1);
+  const timeToRotate = useSharedValue(false);
+  const timeToDelete = useSharedValue(false);
 
   const colorsIndex = useSharedValue(0);
   useEffect(() => {
@@ -92,6 +96,9 @@ const index = () => {
     };
   }, []);
 
+  const rotateHandler = () => (timeToRotate.value = true);
+  const deleteHandler = () => (timeToDelete.value = true);
+
   return (
     <>
       <Canvas style={{ flex: 1 }}>
@@ -108,11 +115,22 @@ const index = () => {
           ...StyleSheet.absoluteFill,
         }}
       >
-        <ReanimCard progress={progress} index={5} />
-        <ReanimCard progress={progress} index={4} />
-        <ReanimCard progress={progress} index={3} />
-        <ReanimCard progress={progress} index={2} />
-        <ReanimCard progress={progress} index={1} />
+        {cardsArray.map((c, i) => {
+          return (
+            <ReanimCard
+              key={i}
+              progress={progress}
+              index={i + 1}
+              timeToRotate={timeToRotate}
+              timeToDelete={timeToDelete}
+              zIndex={-i}
+              removeCard={() => {
+                cardsArray.splice(i, 1);
+                setCardsArray([...cardsArray]);
+              }}
+            />
+          );
+        })}
         <View
           style={{
             flexDirection: "row",
@@ -124,10 +142,10 @@ const index = () => {
           }}
         >
           <View>
-            <Button title="перевернуть" />
+            <Button title="перевернуть" onPress={rotateHandler} />
           </View>
           <View>
-            <Button title="удалить" />
+            <Button title="удалить" onPress={deleteHandler} />
           </View>
         </View>
       </View>

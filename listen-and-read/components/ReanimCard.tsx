@@ -3,11 +3,15 @@ import React from "react";
 import Animated, {
   FadeIn,
   interpolate,
+  runOnJS,
+  SlideOutRight,
+  useAnimatedReaction,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
   withDelay,
   withSpring,
+  withTiming,
 } from "react-native-reanimated";
 import {
   Blur,
@@ -17,7 +21,14 @@ import {
   Shadow,
 } from "@shopify/react-native-skia";
 
-const ReanimCard = ({ progress, index }) => {
+const ReanimCard = ({
+  progress,
+  index,
+  timeToRotate,
+  timeToDelete,
+  zIndex,
+  removeCard,
+}) => {
   const { width, height } = useWindowDimensions();
   const cardWidth = width * 0.8;
   const cardHeight = cardWidth * 1.618;
@@ -34,6 +45,8 @@ const ReanimCard = ({ progress, index }) => {
       ? 0.6
       : 0.5;
   const Y = useSharedValue(startY);
+  const isActive = useSharedValue(progress.value === index);
+  const rotateY = useSharedValue(0);
 
   const firstScale = useDerivedValue(() => {
     return interpolate(progress.value, [1, 2], [startScale, startScale + 0.1]);
@@ -48,14 +61,33 @@ const ReanimCard = ({ progress, index }) => {
     return startBlur - progress.value;
   }, []);
 
+  useAnimatedReaction(
+    () => timeToRotate.value,
+    (v) => {
+      if (v && isActive.value) {
+        rotateY.value = withTiming(-180);
+      }
+    }
+  );
+
+  useAnimatedReaction(
+    () => timeToDelete.value,
+    (v) => {
+      if (v && isActive.value) {
+        runOnJS(removeCard)();
+      }
+    }
+  );
+
   const rStyle = useAnimatedStyle(() => {
     return {
       transform: [
-        { perspective: 300 },
+        { perspective: 1000 },
         {
           translateX: width / 2 - cardWidth / 2 - 75,
         },
         { translateY: firstTransY.value },
+        { rotateY: `${rotateY.value}deg` },
         { scale: firstScale.value },
       ],
     };
@@ -63,7 +95,8 @@ const ReanimCard = ({ progress, index }) => {
 
   return (
     <Animated.View
-      entering={FadeIn.delay(1 * 250)}
+      entering={FadeIn.delay(index * 250)}
+      exiting={SlideOutRight.duration(1000)}
       onTouchEnd={() => (progress.value = withSpring(2))}
       style={[
         {
@@ -71,6 +104,7 @@ const ReanimCard = ({ progress, index }) => {
 
           width: cardWidth + 150,
           height: cardHeight + 150,
+          zIndex: zIndex,
         },
         rStyle,
       ]}
