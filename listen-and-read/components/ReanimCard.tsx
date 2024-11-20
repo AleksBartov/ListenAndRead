@@ -1,5 +1,5 @@
 import { StyleSheet, useWindowDimensions } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Animated, {
   FadeIn,
   interpolate,
@@ -43,25 +43,29 @@ const ReanimCard = ({
     y: height / 2 - cardHeight / 2 - 75,
   };
 
-  const isActive = useSharedValue(index === 0);
+  const [isActive, setIsActive] = useState(false);
+  const [wasTouched, setWasTouched] = useState(false);
+  const [blur, setBlur] = useState(3);
   const translateY = useSharedValue(0);
   const rotateY = useSharedValue(0);
   const scale = useSharedValue(0);
-  const blur = useSharedValue(index === 0 ? 0 : 3);
 
   useEffect(() => {
-    translateY.value = withTiming(
-      centerCoords.y - Math.min(index * transYStep, 200) - transYStep
-    );
-    scale.value = withTiming(Math.max(1 - index * scaleStep, 0.3) - scaleStep);
+    if (progress.value === position) {
+      setBlur(0);
+      setIsActive(true);
+    }
+    translateY.value =
+      centerCoords.y - Math.min(index * transYStep, 200) - transYStep;
+    scale.value = Math.max(1 - index * scaleStep, 0.3) - scaleStep;
     timeToDelete.value = false;
-    console.log("fires");
-  }, [cardsArray]);
+    timeToRotate.value = false;
+  }, [cardsArray, isActive, setIsActive, blur, setBlur, wasTouched]);
 
   useAnimatedReaction(
     () => progress.value,
     (v) => {
-      if (v && isActive.value) {
+      if (v && isActive && wasTouched) {
         translateY.value = withSpring(centerCoords.y);
         scale.value = withSpring(1);
       }
@@ -71,7 +75,7 @@ const ReanimCard = ({
   useAnimatedReaction(
     () => timeToRotate.value,
     (v) => {
-      if (v && isActive.value) {
+      if (v && wasTouched) {
         rotateY.value = withTiming(-180);
       }
     }
@@ -80,11 +84,10 @@ const ReanimCard = ({
   useAnimatedReaction(
     () => timeToDelete.value,
     (v) => {
-      if (v && isActive.value) {
+      if (v && wasTouched) {
         runOnJS(removeCard)(position);
-        isActive.value = false;
-        progress.value = false;
-        timeToRotate.value = false;
+        runOnJS(setIsActive)(false);
+        runOnJS(setWasTouched)(false);
       }
     }
   );
@@ -107,9 +110,11 @@ const ReanimCard = ({
     <Animated.View
       entering={FadeIn.delay(position * 250)}
       exiting={SlideOutRight.duration(1000)}
-      layout={LinearTransition.delay(200)}
       onTouchEnd={() => {
-        if (isActive.value) progress.value = true;
+        if (isActive && !wasTouched) {
+          progress.value = progress.value + 1;
+          setWasTouched(true);
+        }
       }}
       style={[
         {
@@ -131,7 +136,7 @@ const ReanimCard = ({
             r={25}
             color={position % 2 ? "snow" : "cyan"}
           />
-          <Blur blur={blur.value} />
+          <Blur blur={blur} />
           <Shadow dx={5} dy={5} blur={6} color={"rgba(0,0,0,0.4)"} />
         </Group>
       </Canvas>

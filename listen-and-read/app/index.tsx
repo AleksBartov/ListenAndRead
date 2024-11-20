@@ -43,9 +43,10 @@ const cardsArrayStatic = new Array(5).fill(null).map((_, i) => {
 
 const index = () => {
   const { width, height } = useWindowDimensions();
+  const [toRotate, setToRotate] = useState(false);
   const [cardsArray, setCardsArray] = useState(
-    new Array(2).fill(null).map((_, i) => {
-      return { position: i + 1 };
+    new Array(4).fill(null).map((_, i) => {
+      return { position: i };
     })
   );
   const cardWidth = width * 0.8;
@@ -99,7 +100,6 @@ const index = () => {
         }}
       >
         {cardsArray.map((c, i) => {
-          console.log(`after rerendering: ${c.position}, and ${i}`);
           return (
             <ReanimCard
               key={i}
