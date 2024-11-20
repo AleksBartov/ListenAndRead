@@ -37,16 +37,17 @@ const endColors = [
   "rgba(252,176,69,0.4)",
 ];
 
-const cardsArrayStatic = new Array(5).fill(null).map((_, i) => {
-  return { position: i + 1 };
-});
-
 const index = () => {
   const { width, height } = useWindowDimensions();
   const [toRotate, setToRotate] = useState(false);
   const [cardsArray, setCardsArray] = useState(
+<<<<<<< HEAD
     new Array(4).fill(null).map((_, i) => {
       return { position: i };
+=======
+    new Array(5).fill(null).map((_, i) => {
+      return { position: i + 1 };
+>>>>>>> 499f3c1358086d40845b4d14ae7b3903424a6801
     })
   );
   const cardWidth = width * 0.8;
@@ -76,7 +77,7 @@ const index = () => {
 
   const rotateHandler = () => (timeToRotate.value = true);
   const deleteHandler = () => (timeToDelete.value = true);
-  const onDelete = useCallback((cardPosition) => {
+  const onDelete = useCallback((cardPosition: number) => {
     console.log(`index says: ${cardPosition}`);
     setCardsArray((cards) => {
       return cards.filter((item) => item.position !== cardPosition);

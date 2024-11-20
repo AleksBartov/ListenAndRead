@@ -38,6 +38,7 @@ const ReanimCard = ({
   const { width, height } = useWindowDimensions();
   const cardWidth = width * 0.8;
   const cardHeight = cardWidth * 1.618;
+<<<<<<< HEAD
   const centerCoords = {
     x: width / 2 - cardWidth / 2 - 75,
     y: height / 2 - cardHeight / 2 - 75,
@@ -47,6 +48,22 @@ const ReanimCard = ({
   const [wasTouched, setWasTouched] = useState(false);
   const [blur, setBlur] = useState(3);
   const translateY = useSharedValue(0);
+=======
+  const startY = 40 * position;
+  const startBlur = 2 * position;
+  const startScale =
+    position === 1
+      ? 0.9
+      : position === 2
+      ? 0.8
+      : position === 3
+      ? 0.7
+      : position === 4
+      ? 0.6
+      : 0.5;
+  const Y = useSharedValue(startY);
+  const isActive = useSharedValue(cardsArray[0].position === position);
+>>>>>>> 499f3c1358086d40845b4d14ae7b3903424a6801
   const rotateY = useSharedValue(0);
   const scale = useSharedValue(0);
 
@@ -84,10 +101,21 @@ const ReanimCard = ({
   useAnimatedReaction(
     () => timeToDelete.value,
     (v) => {
+<<<<<<< HEAD
       if (v && wasTouched) {
         runOnJS(removeCard)(position);
         runOnJS(setIsActive)(false);
         runOnJS(setWasTouched)(false);
+=======
+      if (v && workingCard.value && isActive.value) {
+        runOnJS(removeCard)(position);
+        isActive.value = false;
+        workingCard.value = false;
+        timeToDelete.value = false;
+        timeToRotate.value = false;
+        progress.value = 1;
+        console.log(`test from ${position}`);
+>>>>>>> 499f3c1358086d40845b4d14ae7b3903424a6801
       }
     }
   );
@@ -111,10 +139,15 @@ const ReanimCard = ({
       entering={FadeIn.delay(position * 250)}
       exiting={SlideOutRight.duration(1000)}
       onTouchEnd={() => {
+<<<<<<< HEAD
         if (isActive && !wasTouched) {
           progress.value = progress.value + 1;
           setWasTouched(true);
         }
+=======
+        progress.value = withSpring(progress.value + 1);
+        workingCard.value = true;
+>>>>>>> 499f3c1358086d40845b4d14ae7b3903424a6801
       }}
       style={[
         {
