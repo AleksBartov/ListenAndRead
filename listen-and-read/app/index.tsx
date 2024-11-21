@@ -45,7 +45,8 @@ const index = () => {
   const [newData, setNewData] = useState([...CARDS]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const animatedValue = useSharedValue(0);
-  const MAX = 3;
+
+  const MAX = 5;
 
   // colors background logic
   const colorsIndex = useSharedValue(0);

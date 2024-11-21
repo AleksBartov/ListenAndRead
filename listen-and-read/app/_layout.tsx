@@ -6,6 +6,7 @@ import {
   Nunito_800ExtraBold,
   Nunito_900Black,
 } from "@expo-google-fonts/nunito";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -27,9 +28,11 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="firstVersion" options={{ headerShown: false }} />
-    </Stack>
+    <GestureHandlerRootView>
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="firstVersion" options={{ headerShown: false }} />
+      </Stack>
+    </GestureHandlerRootView>
   );
 }
