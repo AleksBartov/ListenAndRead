@@ -23,6 +23,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import ReanimCard from "@/components/ReanimCard";
+import Card from "@/components/card/Card";
+import { CARDS } from "@/constants/data/DATA";
 
 const startColors = [
   "rgba(34, 193, 195, 0.4)",
@@ -39,24 +41,13 @@ const endColors = [
 
 const index = () => {
   const { width, height } = useWindowDimensions();
-  const [toRotate, setToRotate] = useState(false);
-  const [cardsArray, setCardsArray] = useState(
-<<<<<<< HEAD
-    new Array(4).fill(null).map((_, i) => {
-      return { position: i };
-=======
-    new Array(5).fill(null).map((_, i) => {
-      return { position: i + 1 };
->>>>>>> 499f3c1358086d40845b4d14ae7b3903424a6801
-    })
-  );
-  const cardWidth = width * 0.8;
-  const cardHeight = cardWidth * 1.618;
+  // cards variables and data
+  const [newData, setNewData] = useState([...CARDS]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const animatedValue = useSharedValue(0);
+  const MAX = 3;
 
-  const progress = useSharedValue(0);
-  const timeToRotate = useSharedValue(false);
-  const timeToDelete = useSharedValue(false);
-
+  // colors background logic
   const colorsIndex = useSharedValue(0);
   useEffect(() => {
     colorsIndex.value = withRepeat(
@@ -75,15 +66,6 @@ const index = () => {
     ];
   });
 
-  const rotateHandler = () => (timeToRotate.value = true);
-  const deleteHandler = () => (timeToDelete.value = true);
-  const onDelete = useCallback((cardPosition: number) => {
-    console.log(`index says: ${cardPosition}`);
-    setCardsArray((cards) => {
-      return cards.filter((item) => item.position !== cardPosition);
-    });
-  }, []);
-
   return (
     <>
       <Canvas style={{ flex: 1 }}>
@@ -98,40 +80,29 @@ const index = () => {
       <View
         style={{
           ...StyleSheet.absoluteFill,
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
-        {cardsArray.map((c, i) => {
+        {newData.map((item, index) => {
+          if (index > currentIndex + MAX || index < currentIndex) {
+            return null;
+          }
           return (
-            <ReanimCard
-              key={i}
-              index={i}
-              progress={progress}
-              position={c.position}
-              timeToRotate={timeToRotate}
-              timeToDelete={timeToDelete}
-              zIndex={-i}
-              removeCard={onDelete}
-              cardsArray={cardsArray}
+            <Card
+              key={index}
+              maxVisibleItems={MAX}
+              dataLength={newData.length}
+              item={item}
+              index={index}
+              newData={newData}
+              setNewData={setNewData}
+              currentIndex={currentIndex}
+              setCurrentIndex={setCurrentIndex}
+              animatedValue={animatedValue}
             />
           );
         })}
-        <View
-          style={{
-            flexDirection: "row",
-            position: "absolute",
-            bottom: 50,
-            width: width,
-            alignItems: "center",
-            justifyContent: "space-around",
-          }}
-        >
-          <View>
-            <Button title="перевернуть" onPress={rotateHandler} />
-          </View>
-          <View>
-            <Button title="удалить" onPress={deleteHandler} />
-          </View>
-        </View>
       </View>
     </>
   );
