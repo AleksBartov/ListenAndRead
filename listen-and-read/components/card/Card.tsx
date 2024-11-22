@@ -12,6 +12,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { BORDER_RADIUS, CARD_HEIGHT, CARD_WIDTH } from "@/constants/data/DATA";
+import Voice from "@react-native-voice/voice";
 
 const Card = ({
   maxVisibleItems,
@@ -23,24 +24,42 @@ const Card = ({
   currentIndex,
   setCurrentIndex,
   animatedValue,
-  startSpeech,
-  stopSpeech,
 }) => {
   const { width } = useWindowDimensions();
+  let [started, setStarted] = useState(false);
+  let [results, setResults] = useState([""]);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const direction = useSharedValue(0);
 
   useEffect(() => {
-    if (currentIndex === index) startSpeech();
+    Voice.onSpeechError = onSpeechError;
+    Voice.onSpeechResults = onSpeechResults;
+    if (index === currentIndex) startSpeechToText();
+    return () => {
+      Voice.destroy().then(Voice.removeAllListeners);
+    };
   }, []);
 
-  useAnimatedReaction(
-    () => translateY.value,
-    (v) => {
-      if (index !== 0 && v === 0) runOnJS(startSpeech)();
-    }
-  );
+  const startSpeechToText = async () => {
+    await Voice.start("ru");
+    setStarted(true);
+  };
+
+  const stopSpeechToText = async () => {
+    await Voice.stop();
+    setStarted(false);
+  };
+
+  const onSpeechResults = (result) => {
+    setResults(result.value);
+    if ([...result.value][0].split(" ").length > 3) stopSpeechToText();
+    console.log([...result.value]);
+  };
+
+  const onSpeechError = (error) => {
+    console.log(error);
+  };
 
   const pan = Gesture.Pan()
     .onUpdate((e) => {

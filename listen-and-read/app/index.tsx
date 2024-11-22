@@ -32,7 +32,6 @@ import ReanimCard from "@/components/ReanimCard";
 import Card from "@/components/card/Card";
 import { CARDS } from "@/constants/data/DATA";
 import { Colors } from "@/constants/Colors";
-import Voice from "@react-native-voice/voice";
 
 const startColors = [
   "rgba(34, 193, 195, 0.4)",
@@ -50,8 +49,6 @@ const endColors = [
 const index = () => {
   const { width, height } = useWindowDimensions();
 
-  let [started, setStarted] = useState(false);
-  let [results, setResults] = useState([""]);
   // cards variables and data
   const [newData, setNewData] = useState([...CARDS]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -92,33 +89,7 @@ const index = () => {
       -1,
       true
     );
-
-    Voice.onSpeechError = onSpeechError;
-    Voice.onSpeechResults = onSpeechResults;
-    return () => {
-      Voice.destroy().then(Voice.removeAllListeners);
-    };
   }, []);
-
-  const startSpeechToText = async () => {
-    await Voice.start("ru");
-    setStarted(true);
-  };
-
-  const stopSpeechToText = async () => {
-    await Voice.stop();
-    setStarted(false);
-  };
-
-  const onSpeechResults = (result) => {
-    setResults(result.value);
-    if ([...result.value][0].split(" ").length > 3) stopSpeechToText();
-    console.log([...result.value]);
-  };
-
-  const onSpeechError = (error) => {
-    console.log(error);
-  };
 
   const path_1 = usePathInterpolation(
     progress,
@@ -177,8 +148,6 @@ const index = () => {
               currentIndex={currentIndex}
               setCurrentIndex={setCurrentIndex}
               animatedValue={animatedValue}
-              startSpeech={startSpeechToText}
-              stopSpeech={stopSpeechToText}
             />
           );
         })}
