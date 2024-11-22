@@ -53,6 +53,7 @@ const index = () => {
   const [newData, setNewData] = useState([...CARDS]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const animatedValue = useSharedValue(0);
+  const toStartsListenning = useSharedValue(0);
 
   // for wave path interpolation
   const progress = useSharedValue(0);
@@ -148,6 +149,7 @@ const index = () => {
               currentIndex={currentIndex}
               setCurrentIndex={setCurrentIndex}
               animatedValue={animatedValue}
+              toStartsListenning={toStartsListenning}
             />
           );
         })}

@@ -24,10 +24,12 @@ const Card = ({
   currentIndex,
   setCurrentIndex,
   animatedValue,
+  toStartsListenning,
 }) => {
   const { width } = useWindowDimensions();
   let [started, setStarted] = useState(false);
   let [results, setResults] = useState([""]);
+
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const direction = useSharedValue(0);
@@ -35,7 +37,7 @@ const Card = ({
   useEffect(() => {
     Voice.onSpeechError = onSpeechError;
     Voice.onSpeechResults = onSpeechResults;
-    if (index === currentIndex) startSpeechToText();
+    // if (index === currentIndex) startSpeechToText();
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
     };
@@ -53,13 +55,22 @@ const Card = ({
 
   const onSpeechResults = (result) => {
     setResults(result.value);
-    if ([...result.value][0].split(" ").length > 3) stopSpeechToText();
     console.log([...result.value]);
   };
 
   const onSpeechError = (error) => {
     console.log(error);
   };
+
+  useAnimatedReaction(
+    () => toStartsListenning.value,
+    (v) => {
+      if (v === index) {
+        runOnJS(startSpeechToText)();
+      }
+    },
+    [toStartsListenning]
+  );
 
   const pan = Gesture.Pan()
     .onUpdate((e) => {
@@ -81,6 +92,7 @@ const Card = ({
           translateX.value = withTiming(width * direction.value, {}, () => {
             runOnJS(setNewData)([...newData, newData[currentIndex]]);
             runOnJS(setCurrentIndex)(currentIndex + 1);
+            runOnJS(stopSpeechToText)();
           });
           animatedValue.value = withTiming(currentIndex + 1);
         } else {
