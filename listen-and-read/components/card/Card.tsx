@@ -1,17 +1,17 @@
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   FadeInDown,
   interpolate,
   runOnJS,
+  useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming,
 } from "react-native-reanimated";
 import { BORDER_RADIUS, CARD_HEIGHT, CARD_WIDTH } from "@/constants/data/DATA";
-import { perspective } from "@shopify/react-native-skia";
 
 const Card = ({
   maxVisibleItems,
@@ -23,10 +23,24 @@ const Card = ({
   currentIndex,
   setCurrentIndex,
   animatedValue,
+  startSpeech,
+  stopSpeech,
 }) => {
   const { width } = useWindowDimensions();
   const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
   const direction = useSharedValue(0);
+
+  useEffect(() => {
+    if (currentIndex === index) startSpeech();
+  }, []);
+
+  useAnimatedReaction(
+    () => translateY.value,
+    (v) => {
+      if (index !== 0 && v === 0) runOnJS(startSpeech)();
+    }
+  );
 
   const pan = Gesture.Pan()
     .onUpdate((e) => {
@@ -59,7 +73,7 @@ const Card = ({
 
   const rStyle = useAnimatedStyle(() => {
     const currentItem = index === currentIndex;
-    const translateY = interpolate(
+    translateY.value = interpolate(
       animatedValue.value,
       [index - 1, index],
       [-40, 0]
@@ -83,7 +97,7 @@ const Card = ({
       transform: [
         { perspective: 1000 },
         { translateX: translateX.value },
-        { translateY: currentItem ? 0 : translateY },
+        { translateY: currentItem ? 0 : translateY.value },
         { scale: currentItem ? 1 : scale },
         { rotateZ: currentItem ? `${direction.value * rotateZ}deg` : "0deg" },
       ],
