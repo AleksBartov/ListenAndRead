@@ -1,18 +1,17 @@
-import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, useWindowDimensions } from "react-native";
+import React from "react";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   FadeInDown,
   interpolate,
   runOnJS,
-  useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming,
 } from "react-native-reanimated";
 import { BORDER_RADIUS, CARD_HEIGHT, CARD_WIDTH } from "@/constants/data/DATA";
-import Voice from "@react-native-voice/voice";
+import { Colors } from "@/constants/Colors";
 
 const Card = ({
   maxVisibleItems,
@@ -24,53 +23,12 @@ const Card = ({
   currentIndex,
   setCurrentIndex,
   animatedValue,
-  toStartsListenning,
 }) => {
   const { width } = useWindowDimensions();
-  let [started, setStarted] = useState(false);
-  let [results, setResults] = useState([""]);
 
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const direction = useSharedValue(0);
-
-  useEffect(() => {
-    Voice.onSpeechError = onSpeechError;
-    Voice.onSpeechResults = onSpeechResults;
-    // if (index === currentIndex) startSpeechToText();
-    return () => {
-      Voice.destroy().then(Voice.removeAllListeners);
-    };
-  }, []);
-
-  const startSpeechToText = async () => {
-    await Voice.start("ru");
-    setStarted(true);
-  };
-
-  const stopSpeechToText = async () => {
-    await Voice.stop();
-    setStarted(false);
-  };
-
-  const onSpeechResults = (result) => {
-    setResults(result.value);
-    console.log([...result.value]);
-  };
-
-  const onSpeechError = (error) => {
-    console.log(error);
-  };
-
-  useAnimatedReaction(
-    () => toStartsListenning.value,
-    (v) => {
-      if (v === index) {
-        runOnJS(startSpeechToText)();
-      }
-    },
-    [toStartsListenning]
-  );
 
   const pan = Gesture.Pan()
     .onUpdate((e) => {
@@ -92,7 +50,6 @@ const Card = ({
           translateX.value = withTiming(width * direction.value, {}, () => {
             runOnJS(setNewData)([...newData, newData[currentIndex]]);
             runOnJS(setCurrentIndex)(currentIndex + 1);
-            runOnJS(stopSpeechToText)();
           });
           animatedValue.value = withTiming(currentIndex + 1);
         } else {
@@ -151,7 +108,15 @@ const Card = ({
         <Animated.View
           style={[styles.container, { backgroundColor: item.bg }, rStyle]}
         >
-          <Text>{item.text}</Text>
+          <Text
+            style={{
+              fontFamily: "Nunito_800ExtraBold",
+              fontSize: 30,
+              color: Colors.blue,
+            }}
+          >
+            {item.text}
+          </Text>
         </Animated.View>
       </Animated.View>
     </GestureDetector>
