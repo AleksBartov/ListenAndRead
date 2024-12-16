@@ -50,6 +50,7 @@ const index = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const animatedValue = useSharedValue(0);
   const [startRec, setStartRec] = useState(false);
+  const rotateBack = useSharedValue(newData.length);
 
   const MAX = 5;
 
@@ -91,8 +92,9 @@ const index = () => {
     let word = newData[animatedValue.value].text.toLowerCase();
     if (result.value[0].split(" ").length === 1) {
       if (result.value[0].split(" ")[0].toLowerCase() === word) {
-        setStartRec(false);
+        setStartRec(false); // for button icon change
         stopSpeechToText();
+        rotateBack.value = animatedValue.value;
       }
     } else {
       if (result.value[0].split(" ").indexOf(word) !== -1) {
@@ -149,6 +151,7 @@ const index = () => {
               currentIndex={currentIndex}
               setCurrentIndex={setCurrentIndex}
               animatedValue={animatedValue}
+              rotateBack={rotateBack}
             />
           );
         })}

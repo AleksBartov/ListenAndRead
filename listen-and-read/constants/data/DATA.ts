@@ -9,484 +9,75 @@ export const CARD_HEIGHT = CARD_WIDTH * 1.618;
 export const BORDER_RADIUS = 25;
 
 export const CARDS = [
-  {
-    text: "СЛОН",
-    bg: Colors.white,
-  },
-  {
-    text: "КЛЕЙ",
-    bg: Colors.white,
-  },
-  {
-    text: "КАША",
-    bg: Colors.white,
-  },
-  {
-    text: "УТРО",
-    bg: Colors.white,
-  },
-  {
-    text: "ВОДА",
-    bg: Colors.white,
-  },
-  {
-    text: "СТУЛ",
-    bg: Colors.white,
-  },
-  {
-    text: "СЛОН",
-    bg: Colors.white,
-  },
-  {
-    text: "КЛЕЙ",
-    bg: Colors.white,
-  },
-  {
-    text: "КАША",
-    bg: Colors.white,
-  },
-  {
-    text: "УТРО",
-    bg: Colors.white,
-  },
-  {
-    text: "ВОДА",
-    bg: Colors.white,
-  },
-  {
-    text: "СТУЛ",
-    bg: Colors.white,
-  },
-  {
-    text: "СЛОН",
-    bg: Colors.white,
-  },
-  {
-    text: "КЛЕЙ",
-    bg: Colors.white,
-  },
-  {
-    text: "КАША",
-    bg: Colors.white,
-  },
-  {
-    text: "УТРО",
-    bg: Colors.white,
-  },
-  {
-    text: "ВОДА",
-    bg: Colors.white,
-  },
-  {
-    text: "СТУЛ",
-    bg: Colors.white,
-  },
-  {
-    text: "СЛОН",
-    bg: Colors.white,
-  },
-  {
-    text: "КЛЕЙ",
-    bg: Colors.white,
-  },
-  {
-    text: "КАША",
-    bg: Colors.white,
-  },
-  {
-    text: "УТРО",
-    bg: Colors.white,
-  },
-  {
-    text: "ВОДА",
-    bg: Colors.white,
-  },
-  {
-    text: "СТУЛ",
-    bg: Colors.white,
-  },
-  {
-    text: "СЛОН",
-    bg: Colors.white,
-  },
-  {
-    text: "КЛЕЙ",
-    bg: Colors.white,
-  },
-  {
-    text: "КАША",
-    bg: Colors.white,
-  },
-  {
-    text: "УТРО",
-    bg: Colors.white,
-  },
-  {
-    text: "ВОДА",
-    bg: Colors.white,
-  },
-  {
-    text: "СТУЛ",
-    bg: Colors.white,
-  },
-  {
-    text: "СЛОН",
-    bg: Colors.white,
-  },
-  {
-    text: "КЛЕЙ",
-    bg: Colors.white,
-  },
-  {
-    text: "КАША",
-    bg: Colors.white,
-  },
-  {
-    text: "УТРО",
-    bg: Colors.white,
-  },
-  {
-    text: "ВОДА",
-    bg: Colors.white,
-  },
-  {
-    text: "СТУЛ",
-    bg: Colors.white,
-  },
-  {
-    text: "СЛОН",
-    bg: Colors.white,
-  },
-  {
-    text: "КЛЕЙ",
-    bg: Colors.white,
-  },
-  {
-    text: "КАША",
-    bg: Colors.white,
-  },
-  {
-    text: "УТРО",
-    bg: Colors.white,
-  },
-  {
-    text: "ВОДА",
-    bg: Colors.white,
-  },
-  {
-    text: "СТУЛ",
-    bg: Colors.white,
-  },
-  {
-    text: "СЛОН",
-    bg: Colors.white,
-  },
-  {
-    text: "КЛЕЙ",
-    bg: Colors.white,
-  },
-  {
-    text: "КАША",
-    bg: Colors.white,
-  },
-  {
-    text: "УТРО",
-    bg: Colors.white,
-  },
-  {
-    text: "ВОДА",
-    bg: Colors.white,
-  },
-  {
-    text: "СТУЛ",
-    bg: Colors.white,
-  },
-  {
-    text: "СЛОН",
-    bg: Colors.white,
-  },
-  {
-    text: "КЛЕЙ",
-    bg: Colors.white,
-  },
-  {
-    text: "КАША",
-    bg: Colors.white,
-  },
-  {
-    text: "УТРО",
-    bg: Colors.white,
-  },
-  {
-    text: "ВОДА",
-    bg: Colors.white,
-  },
-  {
-    text: "СТУЛ",
-    bg: Colors.white,
-  },
-  {
-    text: "СЛОН",
-    bg: Colors.white,
-  },
-  {
-    text: "КЛЕЙ",
-    bg: Colors.white,
-  },
-  {
-    text: "КАША",
-    bg: Colors.white,
-  },
-  {
-    text: "УТРО",
-    bg: Colors.white,
-  },
-  {
-    text: "ВОДА",
-    bg: Colors.white,
-  },
-  {
-    text: "СТУЛ",
-    bg: Colors.white,
-  },
-  {
-    text: "СЛОН",
-    bg: Colors.white,
-  },
-  {
-    text: "КЛЕЙ",
-    bg: Colors.white,
-  },
-  {
-    text: "КАША",
-    bg: Colors.white,
-  },
-  {
-    text: "УТРО",
-    bg: Colors.white,
-  },
-  {
-    text: "ВОДА",
-    bg: Colors.white,
-  },
-  {
-    text: "СТУЛ",
-    bg: Colors.white,
-  },
-  {
-    text: "СЛОН",
-    bg: Colors.white,
-  },
-  {
-    text: "КЛЕЙ",
-    bg: Colors.white,
-  },
-  {
-    text: "КАША",
-    bg: Colors.white,
-  },
-  {
-    text: "УТРО",
-    bg: Colors.white,
-  },
-  {
-    text: "ВОДА",
-    bg: Colors.white,
-  },
-  {
-    text: "СТУЛ",
-    bg: Colors.white,
-  },
-  {
-    text: "СЛОН",
-    bg: Colors.white,
-  },
-  {
-    text: "КЛЕЙ",
-    bg: Colors.white,
-  },
-  {
-    text: "КАША",
-    bg: Colors.white,
-  },
-  {
-    text: "УТРО",
-    bg: Colors.white,
-  },
-  {
-    text: "ВОДА",
-    bg: Colors.white,
-  },
-  {
-    text: "СТУЛ",
-    bg: Colors.white,
-  },
-  {
-    text: "СЛОН",
-    bg: Colors.white,
-  },
-  {
-    text: "КЛЕЙ",
-    bg: Colors.white,
-  },
-  {
-    text: "КАША",
-    bg: Colors.white,
-  },
-  {
-    text: "УТРО",
-    bg: Colors.white,
-  },
-  {
-    text: "ВОДА",
-    bg: Colors.white,
-  },
-  {
-    text: "СТУЛ",
-    bg: Colors.white,
-  },
-  {
-    text: "СЛОН",
-    bg: Colors.white,
-  },
-  {
-    text: "КЛЕЙ",
-    bg: Colors.white,
-  },
-  {
-    text: "КАША",
-    bg: Colors.white,
-  },
-  {
-    text: "УТРО",
-    bg: Colors.white,
-  },
-  {
-    text: "ВОДА",
-    bg: Colors.white,
-  },
-  {
-    text: "СТУЛ",
-    bg: Colors.white,
-  },
-  {
-    text: "СЛОН",
-    bg: Colors.white,
-  },
-  {
-    text: "КЛЕЙ",
-    bg: Colors.white,
-  },
-  {
-    text: "КАША",
-    bg: Colors.white,
-  },
-  {
-    text: "УТРО",
-    bg: Colors.white,
-  },
-  {
-    text: "ВОДА",
-    bg: Colors.white,
-  },
-  {
-    text: "СТУЛ",
-    bg: Colors.white,
-  },
-  {
-    text: "СЛОН",
-    bg: Colors.white,
-  },
-  {
-    text: "КЛЕЙ",
-    bg: Colors.white,
-  },
-  {
-    text: "КАША",
-    bg: Colors.white,
-  },
-  {
-    text: "УТРО",
-    bg: Colors.white,
-  },
-  {
-    text: "ВОДА",
-    bg: Colors.white,
-  },
-  {
-    text: "СТУЛ",
-    bg: Colors.white,
-  },
-  {
-    text: "СЛОН",
-    bg: Colors.white,
-  },
-  {
-    text: "КЛЕЙ",
-    bg: Colors.white,
-  },
-  {
-    text: "КАША",
-    bg: Colors.white,
-  },
-  {
-    text: "УТРО",
-    bg: Colors.white,
-  },
-  {
-    text: "ВОДА",
-    bg: Colors.white,
-  },
-  {
-    text: "СТУЛ",
-    bg: Colors.white,
-  },
-  {
-    text: "СЛОН",
-    bg: Colors.white,
-  },
-  {
-    text: "КЛЕЙ",
-    bg: Colors.white,
-  },
-  {
-    text: "КАША",
-    bg: Colors.white,
-  },
-  {
-    text: "УТРО",
-    bg: Colors.white,
-  },
-  {
-    text: "ВОДА",
-    bg: Colors.white,
-  },
-  {
-    text: "СТУЛ",
-    bg: Colors.white,
-  },
-  {
-    text: "СЛОН",
-    bg: Colors.white,
-  },
-  {
-    text: "КЛЕЙ",
-    bg: Colors.white,
-  },
-  {
-    text: "КАША",
-    bg: Colors.white,
-  },
-  {
-    text: "УТРО",
-    bg: Colors.white,
-  },
-  {
-    text: "ВОДА",
-    bg: Colors.white,
-  },
-  {
-    text: "СТУЛ",
-    bg: Colors.white,
-  },
-];
+  "БАК",
+  "БАЛ",
+  "БАХ",
+  "БЕГ",
+  "БОМ",
+  "БОК",
+  "ГАВ",
+  "ГАЗ",
+  "ГДЕ",
+  "ГОД",
+  "ДАЙ",
+  "ДАР",
+  "ДЫМ",
+  "ЕДА",
+  "ЕЛЬ",
+  "СУП",
+  "ЖИР",
+  "ЖУК",
+  "КОД",
+  "КОМ",
+  "КОТ",
+  "ЛЕВ",
+  "ЛЕС",
+  "ЛЁД",
+  "ЛУЧ",
+  "МЁД",
+  "МЯУ",
+  "МЯЧ",
+  "МЕЧ",
+  "МИР",
+  "ПУХ",
+  "РАК",
+  "РИС",
+  "РОГ",
+  "РОТ",
+  "СОК",
+  "УРА",
+  "УСЫ",
+  "УХО",
+  "УХА",
+  "УШИ",
+  "ХОР",
+  "ЧАЙ",
+  "ШАГ",
+  "ШАР",
+  "ЯМА",
+  "БУК",
+  "БЫК",
+  "ВОТ",
+  "СЫР",
+  "ДВА",
+  "ДНО",
+  "ДОМ",
+  "ДЕД",
+  "ЗУБ",
+  "ИВА",
+  "ИМЯ",
+  "КИТ",
+  "ЛИС",
+  "ЛОБ",
+  "ЛУГ",
+  "ЛУК",
+  "НОЖ",
+  "НОС",
+  "ОСА",
+  "ПЁС",
+].map((word, index) => {
+  return {
+    text: word,
+    bg: index % 2 ? Colors.white : Colors.yellow,
+  };
+});

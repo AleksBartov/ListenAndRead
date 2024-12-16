@@ -5,6 +5,7 @@ import Animated, {
   FadeInDown,
   interpolate,
   runOnJS,
+  useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -23,12 +24,23 @@ const Card = ({
   currentIndex,
   setCurrentIndex,
   animatedValue,
+  rotateBack,
 }) => {
   const { width } = useWindowDimensions();
 
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const direction = useSharedValue(0);
+  const rotateY = useSharedValue(0);
+
+  useAnimatedReaction(
+    () => rotateBack.value,
+    (v) => {
+      if (v === index) {
+        rotateY.value = withSpring(180);
+      }
+    }
+  );
 
   const pan = Gesture.Pan()
     .onUpdate((e) => {
@@ -88,6 +100,42 @@ const Card = ({
         { translateY: currentItem ? 0 : translateY.value },
         { scale: currentItem ? 1 : scale },
         { rotateZ: currentItem ? `${direction.value * rotateZ}deg` : "0deg" },
+        { rotateY: `${rotateY.value}deg` },
+      ],
+      opacity: index < currentIndex + maxVisibleItems ? 1 : opacity,
+    };
+  });
+
+  const backStyle = useAnimatedStyle(() => {
+    const currentItem = index === currentIndex;
+    translateY.value = interpolate(
+      animatedValue.value,
+      [index - 1, index],
+      [-40, 0]
+    );
+    const scale = interpolate(
+      animatedValue.value,
+      [index - 1, index],
+      [0.9, 1]
+    );
+    const rotateZ = interpolate(
+      Math.abs(translateX.value),
+      [0, width],
+      [0, 20]
+    );
+    const opacity = interpolate(
+      animatedValue.value + maxVisibleItems,
+      [index, index + 1],
+      [0, 1]
+    );
+    return {
+      transform: [
+        { perspective: 1000 },
+        { translateX: translateX.value },
+        { translateY: currentItem ? 0 : translateY.value },
+        { scale: currentItem ? 1 : scale },
+        { rotateZ: currentItem ? `${direction.value * rotateZ}deg` : "0deg" },
+        { rotateY: `${rotateY.value + 180}deg` },
       ],
       opacity: index < currentIndex + maxVisibleItems ? 1 : opacity,
     };
@@ -118,6 +166,19 @@ const Card = ({
             {item.text}
           </Text>
         </Animated.View>
+        <Animated.View
+          style={[styles.container, { backgroundColor: item.bg }, backStyle]}
+        >
+          <Text
+            style={{
+              fontFamily: "Nunito_800ExtraBold",
+              fontSize: 30,
+              color: Colors.blue,
+            }}
+          >
+            back
+          </Text>
+        </Animated.View>
       </Animated.View>
     </GestureDetector>
   );
@@ -131,6 +192,7 @@ const styles = StyleSheet.create({
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
     borderRadius: BORDER_RADIUS,
+    backfaceVisibility: "hidden",
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
