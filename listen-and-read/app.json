@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "listen-and-read",
+    "name": "Читаю сам!",
     "slug": "listen-and-read",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -23,9 +23,7 @@
       },
       "package": "com.aleksbartov.listenandread",
       "versionCode": 1,
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ]
+      "permissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {
       "bundler": "metro",
@@ -38,8 +36,8 @@
       [
         "@react-native-voice/voice",
         {
-          "microphonePermission": "CUSTOM: Разрешите Слушаю и читаю доступ к микрофону",
-          "speechRecognitionPermission": "CUSTOM: Разрешите Слушаю и читаю распозновать речь"
+          "microphonePermission": "Разрешите 'Читаю сам!' доступ к микрофону",
+          "speechRecognitionPermission": "Разрешите 'Читаю сам!' распозновать речь"
         }
       ]
     ],
